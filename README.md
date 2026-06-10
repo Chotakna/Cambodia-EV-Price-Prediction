@@ -1,188 +1,566 @@
-# EV Price Prediction and Market Forecasting System
+# EV Price Prediction and Market Forecasting System Using Machine Learning, Facebook Prophet, and Nixtla
 
-## Overview
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![Machine Learning](https://img.shields.io/badge/Machine%20Learning-Scikit--Learn-orange)
+![Forecasting](https://img.shields.io/badge/Forecasting-Nixtla-green)
+![Prophet](https://img.shields.io/badge/Facebook-Prophet-purple)
+![License](https://img.shields.io/badge/License-Academic-red)
 
-A machine learning and time-series forecasting system for estimating electric vehicle (EV) resale prices and analyzing future market trends in Cambodia.
+---
 
-Combines **regression-based ML models** (Linear Regression, Random Forest, XGBoost) with **time-series forecasting** (Prophet) to provide accurate price estimation and future market insights, leveraging both real-world Khmer24 listings and synthetic EV data.
+## Project Overview
+
+The **EV Price Prediction and Market Forecasting System** is a hybrid machine learning and time-series forecasting project developed to estimate electric vehicle (EV) prices and forecast future EV market trends in Cambodia.
+
+The project combines:
+
+- Machine Learning Regression Models
+- Facebook Prophet Forecasting
+- Nixtla Forecasting Framework
+- Real-World EV Market Data
+- Synthetic EV Data Generation
+
+Unlike traditional vehicle valuation systems, this project considers technical vehicle specifications, market behavior, and historical pricing trends to provide accurate EV price estimation and future market forecasting.
 
 ---
 
 ## Objectives
 
-- Predict EV prices using machine learning
-- Identify key factors influencing EV market value
-- Forecast future price trends using Prophet + macroeconomic covariates
-- Compare traditional regression models with forecasting approaches
-- Provide data-driven insights for EV buyers, sellers, and businesses
+- Predict EV market prices using machine learning techniques.
+- Identify the most influential factors affecting EV prices.
+- Forecast future EV prices using advanced time-series methods.
+- Compare machine learning and forecasting approaches.
+- Analyze EV depreciation trends between 2026 and 2030.
+- Support data-driven decision-making for EV buyers, sellers, and businesses.
 
 ---
 
 ## Problem Statement
 
-Traditional vehicle valuation relies on age and mileage, but EVs introduce additional pricing factors: battery capacity and degradation, driving range, charging technology, power output, brand reputation, and government incentives. Conventional depreciation models are insufficient — this project develops a predictive system capturing these complex relationships.
+Traditional vehicle valuation methods primarily focus on:
+
+- Vehicle Age
+- Mileage
+
+However, EV pricing is affected by many additional factors:
+
+- Battery Capacity
+- Driving Range
+- Power Output
+- Charging Technology
+- Battery Aging
+- Brand Reputation
+- Market Demand
+
+These factors create complex pricing relationships that require advanced machine learning and forecasting techniques.
+
+This project aims to build a comprehensive framework capable of:
+
+1. Predicting current EV prices.
+2. Forecasting future EV market trends.
 
 ---
 
-## Datasets
+## Dataset
 
-| Dataset | Source | Records | Usage |
-|---|---|---|---|
-| Khmer24 EV Listings | Real market (Cambodia) | 1,187 | Real-world validation |
-| Synthetic EV Records | Generated (New Formula) | 5,000 | Model training |
-| **Combined** | | **6,187** | |
+### Data Sources
+
+| Dataset | Records |
+| ------- | ------- |
+| Khmer24 EV Listings (Real Data) | 1,187 |
+| Synthetic EV Dataset | 5,000 |
+| **Total** | **6,187** |
+
+The Khmer24 dataset reflects real Cambodian EV market conditions, while the synthetic dataset improves training coverage and model robustness.
 
 ---
 
-## Methodology
+## Features Used
 
-### Feature Engineering
+### Vehicle Features
 
-| Category | Features |
-|---|---|
-| Age | `Age`, `Age_Squared` |
-| Usage | `Log_Mileage`, `Mileage_per_Year` |
-| Efficiency | `Efficiency_km_per_kWh`, `Power_to_Battery`, `Range_per_Power` |
-| Market | `Condition_Score`, `Fast_Charging`, `Listing_Age_Days` |
+- Brand
+- Model
+- Mileage (km)
+- Battery Capacity (kWh)
+- Driving Range (km)
+- Power Output (kW)
+- Acceleration (0-100 km/h)
+- Charging Type
+- Seller Type
+- Vehicle Condition
+- City
+- Color
 
-### Preprocessing Pipeline
+### Engineered Features
 
+- Age
+- Age_Squared
+- Log_Mileage
+- Mileage_per_Year
+- Efficiency_km_per_kWh
+- Power_to_Battery
+- Range_per_Power
+- Condition_Score
+- Fast_Charging
+- Listing_Age_Days
+
+---
+
+## Data Preprocessing
+
+### Data Cleaning
+
+- Duplicate Removal
+- Invalid Price Removal
+- Datetime Conversion
+- Numerical Conversion
+
+### Missing Value Handling
+
+#### Numerical Variables
+
+```python
+Median Imputation
 ```
-Median Imputation (numeric) -> Most Frequent Imputation (categorical)
--> StandardScaler -> OneHotEncoder -> ColumnTransformer -> sklearn Pipeline
+
+#### Categorical Variables
+
+```python
+Most Frequent Imputation
 ```
 
-### Auxiliary Macroeconomic Covariates (Prophet)
+### Feature Transformation
 
-Nine Cambodia-specific monthly features (2020–2030): inflation, fuel price, USD/KHR rate, charging stations, EV policy score, electricity price, battery material index, interest rate, EV import tax rate.
+```python
+StandardScaler()
+OneHotEncoder()
+ColumnTransformer()
+Pipeline()
+```
+
+### Outlier Analysis
+
+```python
+Interquartile Range (IQR)
+```
 
 ---
 
-## Models
+## Feature Engineering
 
-### Regression Models (sklearn)
+### Age Features
 
-| Model | Configuration |
-|---|---|
-| **Linear Regression** | Baseline |
-| **Random Forest** | 400 trees, max_depth=None, min_samples_leaf=2 |
-| **XGBoost** | 500 estimators, max_depth=8, lr=0.05 |
+```text
+Age
+Age_Squared
+```
 
-### Forecasting Models
+### Usage Features
 
-| Model | Approach |
-|---|---|
-| **Prophet** | Logistic growth, explicit changepoints, Cambodia holidays |
-| **Prophet + Aux Fusion** | Baseline + 9 macroeconomic regressors (Early Fusion) |
-| **Direct Global Fusion** | Random Forest on all features + auxiliary (bypasses Prophet) |
-| **Late Fusion** | Prophet trend + RF residual correction |
-| **Aggregated Prophet** | Daily aggregation + 48 hyperparameter combinations |
+```text
+Log_Mileage
+Mileage_per_Year
+```
+
+### Efficiency Features
+
+```text
+Efficiency_km_per_kWh
+Power_to_Battery
+Range_per_Power
+```
+
+### Market Features
+
+```text
+Condition_Score
+Fast_Charging
+Listing_Age_Days
+```
+
+---
+
+## Models Implemented
+
+### Machine Learning Models
+
+#### Linear Regression
+
+Baseline predictive model used to estimate EV prices based on vehicle attributes.
+
+#### Random Forest Regressor
+
+Ensemble learning model used to capture complex non-linear pricing relationships.
+
+```python
+RandomForestRegressor(
+    n_estimators=400,
+    max_depth=None,
+    min_samples_leaf=2,
+    random_state=42,
+    n_jobs=-1
+)
+```
+
+### Facebook Prophet Models
+
+#### Baseline Prophet
+
+Forecasting model using historical EV prices.
+
+#### Prophet with Auxiliary Data (Early Fusion)
+
+Prophet enhanced with external regressors:
+
+- Mileage
+- Vehicle Age
+- Battery Capacity
+- Driving Range
+- Power Output
+- Condition Score
+- Brand Premium
+
+Features:
+
+- Logistic Growth Trend
+- Yearly Seasonality
+- Cambodia Holiday Effects
+- Changepoint Detection
+
+### Nixtla Forecasting Framework
+
+#### StatsForecast
+
+##### AutoARIMA
+
+```python
+AutoARIMA(season_length=12)
+```
+
+Purpose:
+
+- Statistical forecasting baseline
+- Automatic parameter optimization
+- Monthly EV price forecasting
+
+#### MLForecast
+
+##### Linear Regression Forecasting
+
+```python
+LinearRegression()
+```
+
+##### Random Forest Forecasting
+
+```python
+RandomForestRegressor(
+    n_estimators=200,
+    random_state=42
+)
+```
+
+##### Gradient Boosting Regression Trees (GBRT)
+
+```python
+GradientBoostingRegressor(
+    n_estimators=499,
+    learning_rate=0.1,
+    max_depth=5,
+    subsample=0.8,
+    random_state=42
+)
+```
+
+---
+
+## Forecast Configuration
+
+### Lag Features
+
+```python
+[1, 2, 3, 4, 5, 6]
+```
+
+### Forecast Horizon
+
+```text
+6 Months
+```
+
+### Validation Strategy
+
+```text
+Rolling Window Cross Validation
+```
 
 ---
 
 ## Evaluation Metrics
 
-```
-MAE, MSE, RMSE, MAPE, R-squared, Accuracy@10%
-```
+- MAE (Mean Absolute Error)
+- MSE (Mean Squared Error)
+- RMSE (Root Mean Squared Error)
+- MAPE (Mean Absolute Percentage Error)
+- R² Score
 
 ---
 
 ## Results
 
-### Synthetic Data (5,000 records) - 80/20 Split
+### 1. Linear Regression
 
-| Model | R-squared | MAE | RMSE |
-|---|---|---|---|
-| **Linear Regression** | **0.9911** | $1,295 | $1,715 |
-| XGBoost | 0.9908 | $1,279 | $1,750 |
-| Random Forest | 0.9905 | $1,284 | $1,775 |
+#### Test Performance
 
-### Real-World Khmer24 Data (1,187 records)
+| Metric | Value |
+| ------ | ----- |
+| MAE | $1,295.12 |
+| RMSE | $1,715.24 |
+| R² | 0.9911 |
 
-| Model | R-squared | MAE | RMSE |
-|---|---|---|---|
-| **XGBoost** | **0.9461** | $2,359 | $4,149 |
-| Random Forest | 0.9328 | $2,806 | $4,635 |
-| Linear Regression | 0.9251 | $3,246 | $4,892 |
+#### Cross Validation
 
-### Grouped Cross-Validation (5-fold GroupKFold)
+| Metric | Value |
+| ------ | ----- |
+| Mean R² | 0.9892 |
+| Mean RMSE | $1,830.39 |
 
-Prevents data leakage from repeated car signatures (same model/year across train and test).
+#### Findings
 
-| Model | R-squared | RMSE |
-|---|---|---|
-| **Linear Regression** | **0.9892** | $1,830 |
-| XGBoost | 0.9884 | $1,883 |
-| Random Forest | 0.9843 | $2,203 |
+- Best regression model on synthetic data.
+- Strong generalization capability.
+- Minimal overfitting.
+- Explained over 99% of EV price variation.
 
-### Prophet Models (Combined Synthetic + Historical)
+### 2. Random Forest Regressor
 
-| Model | R-squared | MAE | MAPE |
-|---|---|---|---|
-| Baseline Prophet | ~0.75 | ~$7,161 | ~16.2% |
-| Direct Global Fusion (RF + Aux) | **0.94+** | -- | -- |
+#### Test Performance
 
----
+| Metric | Value |
+| ------ | ----- |
+| MAE | $1,284.30 |
+| RMSE | $1,775.13 |
+| R² | 0.9905 |
 
-## Feature Importance (XGBoost)
-
-Top predictors from synthetic data:
+#### Top Important Features
 
 | Feature | Importance |
-|---|---|
-| `Model Name_BYD Sealion 6` | 21.8% |
-| `Model Name_AITO M7` | 17.9% |
-| `Brand_Hyundai` | 6.4% |
-| `Power_Avg` | 5.8% |
-| `Model Name_Hyundai Ioniq 5` | 4.5% |
-| `Acceleration` | 3.2% |
-| `Battery_Avg` | 3.2% |
+| ------- | ---------- |
+| Power Output | 0.6987 |
+| Acceleration | 0.0891 |
+| Battery Capacity | 0.0447 |
+| Efficiency | 0.0260 |
 
-Model-level identity dominates -- specific models encode bundled specifications (power, battery, range, brand perception) that drive price more than any individual numeric feature alone.
+#### Findings
+
+- Strong non-linear learning capability.
+- Slightly better MAE than Linear Regression.
+- Strong performance on Khmer24 real-world data.
+
+### 3. Facebook Prophet
+
+#### Khmer24 Dataset
+
+| Metric | Value |
+| ------ | ----- |
+| MAE | $7,707.63 |
+| RMSE | $8,937.15 |
+| MAPE | 17.11% |
+| R² | 0.7029 |
+
+#### Synthetic Dataset
+
+| Metric | Value |
+| ------ | ----- |
+| MAE | $6,614.48 |
+| RMSE | $8,786.22 |
+| MAPE | 15.25% |
+| R² | 0.7969 |
+
+#### Findings
+
+- Successfully modeled market trends.
+- Captured seasonality and holiday effects.
+- Better performance on synthetic data.
 
 ---
 
-## Key Insights
+## Nixtla Forecasting Results
 
-- **Synthetic-to-Real Gap**: R-squared drops from ~0.99 to ~0.93--0.95 when moving to real Khmer24 data, a ~5--7% performance decline from real-world noise and missing values.
-- **GroupKFold Confirms Robustness**: R-squared remains above 0.98 even under strict grouped cross-validation.
-- **Model Name** is the strongest predictor -- it bundles all specifications and brand perception.
-- **Power Output, Battery Capacity, and Acceleration** are the top continuous drivers.
-- Adding Cambodia macroeconomic covariates improves Prophet accuracy, but sklearn models already saturate performance.
+| Method | Dataset | R² | MAE |
+| ------ | ------- | -- | --- |
+| Baseline Prophet | Historical + Synthetic | 0.7587 | $6,777 |
+| Early Fusion (+ Auxiliary Data) | Historical + Synthetic | 0.7655 | $6,416 |
+| Direct Global Fusion (Random Forest) | Combined Dataset | **0.9825** | **$2,145** |
+| Late Fusion (Prophet + RF) | Combined Dataset | 0.8118 | $6,615 |
+| Aggregated Prophet | Combined Dataset | 0.7328 | $6,606 |
+
+### Best Forecasting Model
+
+#### Direct Global Fusion (Nixtla + Random Forest)
+
+| Metric | Value |
+| ------ | ----- |
+| R² | **0.9825** |
+| MAE | **$2,145** |
+
+This model achieved the highest forecasting accuracy by combining:
+
+- Historical EV price trends
+- Lag-based forecasting features
+- Vehicle specifications
+- Auxiliary market variables
+- Random Forest forecasting
 
 ---
 
-## Tech Stack
+## Future EV Price Forecast (2026-2030)
 
-**Language:** Python  
-**Libraries:** pandas, NumPy, scikit-learn, XGBoost, Prophet, matplotlib, seaborn  
-**Environment:** Jupyter Notebook
+| Vehicle | 2026 | 2027 | 2028 | 2029 | 2030 |
+| ------- | ---- | ---- | ---- | ---- | ---- |
+| BYD Atto 3 | $23,869 | $20,747 | $17,928 | $17,914 | $18,362 |
+| MG ZS EV | $22,655 | $19,539 | $17,114 | $17,451 | $17,902 |
+| Nissan Leaf | $8,442 | $7,414 | $7,414 | $7,414 | $7,414 |
+| Tesla Model 3 | $37,346 | $34,308 | $31,575 | $29,262 | $29,747 |
+| Tesla Model Y | $51,783 | $48,808 | $46,140 | $43,514 | $41,063 |
+
+### Key Forecast Insights
+
+- Tesla Model Y retains the highest market value.
+- Tesla Model 3 shows strong long-term resale performance.
+- BYD Atto 3 and MG ZS EV experience faster depreciation.
+- Nissan Leaf remains relatively stable at a lower price range.
+- EV prices generally decline due to battery aging, technological advancement, and increased market competition.
+
+---
+
+## Key Findings
+
+- Power Output is the strongest predictor of EV price.
+- Battery Capacity and Driving Range significantly influence resale value.
+- Linear Regression achieved excellent predictive accuracy.
+- Random Forest effectively captured non-linear relationships.
+- Prophet successfully modeled long-term market trends.
+- Nixtla provided advanced forecasting capabilities.
+- Direct Global Fusion achieved the highest forecasting performance.
+- Combining Machine Learning and Forecasting produced the most comprehensive EV valuation framework.
+
+---
+
+## Technology Stack
+
+### Programming Language
+
+- Python 3.10+
+
+### Libraries
+
+- Pandas
+- NumPy
+- Scikit-Learn
+- Facebook Prophet
+- Nixtla
+- StatsForecast
+- MLForecast
+- Matplotlib
+- Seaborn
+
+### Development Environment
+
+- Jupyter Notebook
+- Google Colab
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.10 or higher
+- Jupyter Notebook or Google Colab
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/EV-Price-Prediction.git
+cd EV-Price-Prediction
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### Usage
+
+```bash
+# Launch Jupyter Notebook
+jupyter notebook
+
+# Open the desired notebook from the notebooks/ directory:
+# - data_preprocessing.ipynb
+# - linear_regression.ipynb
+# - random_forest.ipynb
+# - prophet_forecasting.ipynb
+# - nixtla_forecasting.ipynb
+```
 
 ---
 
 ## Project Structure
 
-```
-EV_prediction/
-├── Take_work/
-│   ├── EV_price+AUX.ipynb                         # Main ML pipeline (LR, RF, XGBoost)
-│   ├── Prophet_with_Cambodia_Auxiliary_Data.ipynb  # Prophet + macro fusion
-│   └── *.csv                                       # Dataset files
+```text
+EV-Price-Prediction/
+│
+├── data/
+│   ├── khmer24_ev_data.csv
+│   ├── synthetic_ev_data.csv
+│
+├── notebooks/
+│   ├── data_preprocessing.ipynb
+│   ├── linear_regression.ipynb
+│   ├── random_forest.ipynb
+│   ├── prophet_forecasting.ipynb
+│   ├── nixtla_forecasting.ipynb
+│
+├── models/
+│   ├── linear_regression.pkl
+│   ├── random_forest.pkl
+│
+├── results/
+│   ├── evaluation_metrics/
+│   ├── visualizations/
+│   ├── forecasts/
+│
 ├── README.md
-└── requirements.txt
+├── requirements.txt
+└── LICENSE
 ```
 
 ---
 
 ## Authors
 
-**Cheang Yornphavorak, Kruy Monychotakna, Bun David, Uon Kimmeng, Khut Buntha**
+- Cheang Yornphavorak
+- Kruy Monychotakna
+- Bun David
+- Uon Kimmeng
+- Khut Buntha
 
-Royal University of Phnom Penh -- Bachelor of Engineering in Data Science and Engineering
+### Institution
+
+Royal University of Phnom Penh (RUPP)
+
+Bachelor of Engineering in Data Science and Engineering
 
 ---
 
 ## License
 
-Academic and research purposes. May be used for educational and non-commercial research with proper attribution.
+This project was developed for academic and research purposes. It may be used for educational and non-commercial research with proper attribution.
+
+---
+
+## Conclusion
+
+This project presents a comprehensive EV valuation framework that integrates machine learning prediction models, Facebook Prophet forecasting, and the Nixtla forecasting ecosystem. The results demonstrate that combining vehicle-specific features with advanced time-series forecasting techniques can significantly improve EV price estimation and market trend prediction. Among all forecasting approaches, the Direct Global Fusion model achieved the strongest forecasting performance, highlighting the effectiveness of combining machine learning with temporal forecasting methods for real-world EV market analysis.
